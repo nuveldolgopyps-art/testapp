@@ -46,94 +46,175 @@ export default function App() {
     : ARTWORKS.filter((art) => art.category === filter);
 
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-8 bg-white text-black font-sans">
-      
-      {/* HEADER */}
-      <header className="mb-12">
-        <h1 className="text-3xl font-bold mb-2">Katrin Nakonechna</h1>
-        <p className="mb-4 text-lg">Communication and Multimedia Design (CMD) Portfolio</p>
-        <nav className="flex gap-4">
-          <a href="#work" className="text-blue-600 underline">Work</a>
-          <a href="#about" className="text-blue-600 underline">About</a>
-        </nav>
-      </header>
-
-      {/* MAIN CONTENT */}
-      <main>
+    <>
+      {/* INJECTED RESPONSIVE CSS */}
+      <style>{`
+        /* Global Reset */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+          background-color: #ffffff; 
+          color: #111111; 
+          line-height: 1.6;
+        }
         
-        {/* HERO */}
-        <section className="mb-16">
-          <p className="mb-4 max-w-2xl">
-            First year, period one showcase. Curated creations exploring illustration, 3D environments, and design tooling.
-          </p>
-          <img 
-            src={heroImg} 
-            alt="Featured work" 
-            className="w-full max-w-2xl h-auto" 
-          />
-        </section>
+        /* Make all images responsive so they never break out of their containers */
+        img { max-width: 100%; height: auto; display: block; }
 
-        {/* WORK / GALLERY */}
-        <section id="work" className="mb-16">
-          <h2 className="text-2xl font-bold mb-4">Selected Works</h2>
-          
-          {/* FILTER */}
-          <div className="flex flex-wrap gap-4 mb-8">
-            <span className="font-semibold">Filter:</span>
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setFilter(cat)}
-                className={filter === cat ? "font-bold underline" : "text-blue-600 underline"}
-              >
-                {cat}
-              </button>
-            ))}
+        /* Main Layout constraints */
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+        /* Header Layout */
+        header { 
+          display: flex; flex-direction: column; gap: 1rem; 
+          border-bottom: 2px solid #111; padding-bottom: 1.5rem; margin-bottom: 3rem; 
+        }
+        .header-title { font-size: 1.5rem; font-weight: 800; text-transform: uppercase; letter-spacing: -0.05em; }
+        nav { display: flex; gap: 1.5rem; }
+        nav a { color: #111; font-weight: 600; text-decoration: none; text-transform: uppercase; font-size: 0.85rem; }
+        nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+        /* Media Query: Desktop Header */
+        @media (min-width: 768px) {
+          header { flex-direction: row; justify-content: space-between; align-items: flex-end; }
+        }
+
+        /* Hero Layout */
+        .hero { display: flex; flex-direction: column; gap: 2rem; margin-bottom: 5rem; }
+        .hero p { font-size: 1.25rem; color: #444; max-width: 600px; }
+        .hero-img-wrap { border: 1px solid #e5e5e5; padding: 0.5rem; background: #fafafa; }
+        
+        /* Media Query: Desktop Hero */
+        @media (min-width: 768px) {
+          .hero { flex-direction: row; align-items: center; }
+          .hero > div { flex: 1; }
+        }
+
+        /* Filters */
+        .filters { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 2rem; align-items: center; }
+        .filters strong { text-transform: uppercase; font-size: 0.85rem; margin-right: 0.5rem; }
+        .filter-btn {
+          background: #fff; border: 1px solid #ccc; padding: 0.5rem 1rem; 
+          cursor: pointer; font-size: 0.85rem; border-radius: 4px; transition: all 0.2s;
+        }
+        .filter-btn:hover { border-color: #111; }
+        .filter-btn.active { background: #111; color: #fff; border-color: #111; }
+
+        /* Gallery Grid */
+        .gallery { 
+          display: grid; 
+          /* This makes the grid responsive. Images will never be smaller than 280px, but will fill available space */
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+          gap: 2.5rem; 
+          margin-bottom: 5rem; 
+        }
+        .card-img-wrap {
+          background: #f9f9f9; 
+          border: 1px solid #eaeaea; 
+          /* Forces all image boxes to be the same height ratio */
+          aspect-ratio: 4 / 3; 
+          display: flex; align-items: center; justify-content: center;
+          padding: 1.5rem; margin-bottom: 1rem;
+        }
+        .card-img-wrap img {
+          max-height: 100%; object-fit: contain; 
+        }
+        .card h3 { font-size: 1.1rem; margin-bottom: 0.25rem; }
+        .card span { font-size: 0.75rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* Footer */
+        footer { 
+          border-top: 1px solid #eaeaea; padding-top: 2rem; 
+          display: flex; justify-content: space-between;
+          font-size: 0.85rem; color: #666; text-transform: uppercase;
+        }
+      `}</style>
+
+      {/* HTML STRUCTURE */}
+      <div className="container">
+        
+        <header>
+          <div>
+            <div className="header-title">Katrin.N</div>
+            <div style={{ fontSize: "0.85rem", color: "#666", marginTop: "0.25rem" }}>
+              CMD Portfolio Archive
+            </div>
           </div>
+          <nav>
+            <a href="#work">Index</a>
+            <a href="#about">Info</a>
+          </nav>
+        </header>
 
-          {/* GRID */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {displayedArt.map((art) => (
-              <figure key={art.id} className="m-0">
-                <img 
-                  src={art.image} 
-                  alt={art.title} 
-                  className="w-full h-auto mb-2 bg-gray-50" 
-                  loading="lazy"
-                />
-                <figcaption>
-                  <strong>{art.title}</strong>
-                  <br />
-                  <span className="text-sm text-gray-600">{art.category}</span>
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+        <main>
+          {/* HERO SECTION */}
+          <section className="hero">
+            <div>
+              <p>
+                First year, period one showcase. Curated creations exploring illustration, 3D environments, and foundational design tooling.
+              </p>
+            </div>
+            <div className="hero-img-wrap">
+              <img src={heroImg} alt="Hero Banner" />
+            </div>
+          </section>
 
-          {displayedArt.length === 0 && (
-            <p className="text-gray-500 italic mt-8">No creations match this filter.</p>
-          )}
-        </section>
+          {/* WORK SECTION */}
+          <section id="work">
+            <div style={{ borderBottom: "1px solid #eaeaea", paddingBottom: "1rem", marginBottom: "1.5rem" }}>
+              <h2 style={{ fontSize: "1.75rem", fontWeight: 800 }}>Selected Works</h2>
+            </div>
+            
+            <div className="filters">
+              <strong>Filter:</strong>
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setFilter(cat)}
+                  className={`filter-btn ${filter === cat ? "active" : ""}`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
 
-        {/* ABOUT */}
-        <section id="about" className="mb-16 max-w-2xl">
-          <h2 className="text-2xl font-bold mb-4">About Me</h2>
-          <p className="mb-4">
-            I am currently a first-year student studying Communication and Multimedia Design (CMD) at NHL Stenden in Leeuwarden. 
-          </p>
-          <p>
-            Equipped with a background in digital painting via Procreate, I am fast-tracking my skills across complex 3D environments in Blender and asset production in Adobe Illustrator.
-          </p>
-        </section>
+            <div className="gallery">
+              {displayedArt.map((art) => (
+                <article key={art.id} className="card">
+                  <div className="card-img-wrap">
+                    <img src={art.image} alt={art.title} loading="lazy" />
+                  </div>
+                  <div>
+                    <h3>{art.title}</h3>
+                    <span>{art.category}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
 
-      </main>
+            {displayedArt.length === 0 && (
+              <p style={{ color: "#666", padding: "3rem 0", textAlign: "center", border: "1px dashed #ccc" }}>
+                No items match this filter.
+              </p>
+            )}
+          </section>
 
-      {/* FOOTER */}
-      <footer className="mt-16 pt-8 border-t border-gray-200 text-sm text-gray-600">
-        <p>© 2026 Katrin Nakonechna</p>
-        <p>NHL Stenden</p>
-      </footer>
+          {/* ABOUT SECTION */}
+          <section id="about" style={{ marginBottom: "4rem", maxWidth: "700px" }}>
+            <h2 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "1rem" }}>About</h2>
+            <p style={{ color: "#444" }}>
+              I am currently a first-year student studying <strong>Communication and Multimedia Design (CMD)</strong> at NHL Stenden in Leeuwarden. 
+              Equipped with a background in digital painting via Procreate, I am fast-tracking my skills across complex 3D environments in Blender and asset production in Adobe Illustrator.
+            </p>
+          </section>
+        </main>
 
-    </div>
+        <footer>
+          <span>© 2026 Katrin Nakonechna</span>
+          <span>NHL Stenden</span>
+        </footer>
+
+      </div>
+    </>
   );
 }
